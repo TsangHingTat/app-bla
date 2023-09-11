@@ -47,8 +47,6 @@ body {
 }
 
 
-
-
 .home {
   height: 100vh;
   position: relative;
@@ -60,6 +58,4 @@ video {
   height: 30%;
 }
 
-h1 {
-    z-index: 2; 
-}
+
