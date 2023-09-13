@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>香港9日天氣預測</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color: black;
+      }
+
+      #nine-day-forecast {
+        display: flex;
+        flex-wrap: wrap; /* makes the div elements can wrap into multiple rows */
+        justify-content: center;
+        align-items: center;
+      }
+
+      #nine-day-forecast > div {
+        border: solid 1px rgb(98, 142, 212);
+        margin: 0.5em;
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: rgb(112, 152, 215);
+        color: white;
+      }
+
+      #nine-day-forecast h4 {
+        color: #333;
+      }
+
+      #nine-day-forecast > div img {
+        width: 15%; /* reduce the img width to fit smaller screen */
+      }
+
+      /* larger screens */
+      @media (min-width: 768px) {
+
+        #nine-day-forecast > div {
+          flex: 1; /* makes the div elements stretch equally across the row */
+        }
+
+        #nine-day-forecast > div img {
+          width: 40px; /* reset the img width to 40px for larger screens */
+        }
+      }
+
+</style>
+
+  </head>
+  <body>
+    <div id="nine-day-forecast"></div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      fetch(
+        "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=fnd&lang=tc"
+      )
+        .then((response) => response.json()) // geting response
+        .then((data) => {
+          // processing JSON data
+          var output = document.querySelector("#nine-day-forecast");
+          weatherForecast = data.weatherForecast; // an array
+          weatherForecast.forEach((item) => {
+            //console.log(item.week);
+            const forecast = document.createElement("div");
+            forecast.innerHTML =
+              "<h4> " +
+              item.week +
+              "</h4><div>" +
+              "<img src='https://www.hko.gov.hk/images/HKOWxIconOutline/pic" +
+              item.ForecastIcon +
+              ".png'/></div><div>" +
+              item.forecastMintemp.value +
+              "-" +
+              item.forecastMaxtemp.value +
+              "°C</div>";
+            output.appendChild(forecast);
+          });
+        });
+    </script>
+  </body>
+</html>
