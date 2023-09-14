@@ -71,8 +71,7 @@ video {
     align-items: center; 
 }
   
-  
-
 #content3 {
-    padding: 10px; 
+    padding-left: 10%; 
+    padding-right: 3%; 
 }
