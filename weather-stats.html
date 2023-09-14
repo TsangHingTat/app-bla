@@ -12,7 +12,7 @@
   padding-left: 35px;
 }
 
-img {
+#icon {
   position: absolute;
   vertical-align: middle;
   height: 25px;
@@ -24,10 +24,11 @@ img {
 <body>
   <div id="container">
     <div id="header"></div>
-    <div id="warnings-table"></div>
+    
   </div>
   <script src="/script.js"></script>
   <script>
+    //<div id="warnings-table"></div>
 // get the weather data from Observatory
 async function getObData() {
   return fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en", {mode: 'cors'})
