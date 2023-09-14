@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* Reset default margins and padding for better alignment */
+body, div, p, span {
+  margin: 0;
+  padding: 0;
+}
+
+#weather-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center the content */
+  justify-content: left; /* Horizontally center the content */
+}
+
+.weather-paragraph {
+  color: blue;
+  padding: 10px;
+}
+
+#warnings-table-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center the content */
+}
+
+.weather-icon-img {
+  height: 65px;
+}
+
+#weather-info-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center the content */
+}
+
+.weather-temp {
+  font-size: 100%;
+  padding-left: 10px;
+}
+
+#weather-header {
+  display: flex;
+  flex-direction: row;
+}
+
+#weather-header img {
+  padding-left: 5px;
+}
+</style>
+</head>
+<body>
+  <div id="weather-container">
+    <div id="weather-warnings-container">
+      <div id="warnings-table-container"></div>
+    </div>
+    <div id="weather-info-container">
+      <div id="weather-header-container"></div>
+    </div>
+  </div>
+  <script>
+    class WeatherDataModel {
+      constructor() {
+        this.weatherData = {};
+        this.fetchData();
+      }
+
+      fetchData() {
+        fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en')
+          .then(response => response.json())
+          .then(data => {
+            this.weatherData = data;
+            this.updateWarnings();
+          })
+          .catch(err => console.log('Error decoding JSON:', err));
+      }
+
+      updateWarnings() {
+        const warningsTableContainer = document.getElementById("warnings-table-container");
+        warningsTableContainer.innerHTML = "";
+
+        const warningKeys = Object.keys(this.weatherData).sort();
+        warningKeys.forEach(warningKey => {
+          const warningInfo = this.weatherData[warningKey];
+
+          const warningElement = document.createElement('div');
+          const imgElement = document.createElement('img');
+          
+          // Convert the code to lowercase and handle "WTS" code specifically
+          const code = warningInfo.code.toLowerCase() === "wts" ? "ts" : warningInfo.code.toLowerCase();
+
+          imgElement.src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${code}.gif`; // Update src property with correct URL
+          imgElement.classList.add("weather-icon-img");
+          warningElement.appendChild(imgElement);
+
+          warningsTableContainer.appendChild(warningElement);
+        });
+      }
+
+    }
+
+    new WeatherDataModel();
+
+    
+  </script>
+</body>
+</html>

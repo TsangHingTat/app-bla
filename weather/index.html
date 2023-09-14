@@ -61,8 +61,10 @@
         </div>
     </nav>
     <div class="home">
-        </br>
-        <h1>香港9天天氣預測</h1>
+        <div class="row2">
+            <h1>香港9天天氣預測</h1>
+            <div id="content3"></div>
+        </div>
         <div id="content2"></div>
         <p>資料來源： <a href="https://www.hko.gov.hk/en/index.html">香港天文台</a> / <a href="https://apps.apple.com/us/app/h-weather/id1659613520">H. Weather</a></p>
         </br>
@@ -80,6 +82,7 @@
     <script>
         $("#content").load("/weather-stats.html");
         $("#content2").load("/weather-9days.html");
+        $("#content3").load("/weather-stats-data.html");
     </script>
 </body>
 </html>
