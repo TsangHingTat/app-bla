@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+
+#temp {
+  vertical-align: middle;
+  font-size: 100%;
+  padding: 10px;
+  padding-left: 35px;
+}
+
+#warnings-table img {
+  position: absolute;
+  vertical-align: middle;
+  height: 25px;
+}
+
+#warnings-table {
+  display: flex;
+  flex-direction: row;
+}
+
+</style>
+</head>
+<body>
+  <div id="warnings-table"></div>
+  <script>
+  class WeatherViewModel {
+      constructor() {
+          this.weatherWarnings = {};
+          this.fetchData();
+      }
+
+      fetchData() {
+          fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en')
+              .then(response => response.json())
+              .then(data => {
+                  this.weatherWarnings = data;
+                  this.updateWarnings();
+              })
+              .catch(err => console.log('Error decoding JSON:', err));
+      }
+
+      updateWarnings() {
+        const warningsTable = document.getElementById("warnings-table");
+        warningsTable.innerHTML = "";
+
+        const warningKeys = Object.keys(this.weatherWarnings).sort();
+        warningKeys.forEach(warningKey => {
+          const warningInfo = this.weatherWarnings[warningKey];
+
+          const warningElement = document.createElement('div');
+          const imgElement = document.createElement('img');
+
+          // Convert the code to lowercase and handle "WTS" code specifically
+          const code = warningInfo.code.toLowerCase() === "wts" ? "ts" : warningInfo.code.toLowerCase();
+
+          imgElement.src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${code}.gif`; // Update src property with correct URL
+          warningElement.appendChild(imgElement);
+
+          warningsTable.appendChild(warningElement);
+      });
+  }
+
+}
+
+new WeatherViewModel();
+
+</script>
+</body>
+</html>

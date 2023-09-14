@@ -5,91 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 
-#temp {
-  vertical-align: middle;
-  font-size: 100%;
-  padding: 10px;
-  padding-left: 35px;
+#container {
+  display: flex;
+  flex-direction: row;
 }
 
-#icon {
-  position: absolute;
-  vertical-align: middle;
+
+
+#warnings-table {
+  display: flex;
+  flex-direction: row;
+}
+
+.weather-icon {
   height: 25px;
 }
 
+#weather-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.temp {
+  font-size: 100%;
+  padding-left: 20px;
+}
+
+#header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#header img {
+  padding-left: 10px;
+}
 
 </style>
 </head>
 <body>
   <div id="container">
-    <div id="header"></div>
-    
+    <div id="weather-warnings">
+      <div id="warnings-table"></div>
+    </div>
+    <div id="weather-info">
+      <div id="header"></div>
+    </div>
   </div>
-  <script src="/script.js"></script>
   <script>
-    //<div id="warnings-table"></div>
-// get the weather data from Observatory
-async function getObData() {
-  return fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en", {mode: 'cors'})
-  .then(response => response.json());
-}
+    class WeatherViewModel {
+      constructor() {
+        this.weatherWarnings = {};
+        this.fetchData();
+      }
+
+      fetchData() {
+        fetch('https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en')
+          .then(response => response.json())
+          .then(data => {
+            this.weatherWarnings = data;
+            this.updateWarnings();
+          })
+          .catch(err => console.log('Error decoding JSON:', err));
+      }
+
+      updateWarnings() {
+        const warningsTable = document.getElementById("warnings-table");
+        warningsTable.innerHTML = "";
+
+        const warningKeys = Object.keys(this.weatherWarnings).sort();
+        warningKeys.forEach(warningKey => {
+          const warningInfo = this.weatherWarnings[warningKey];
+
+          const warningElement = document.createElement('div');
+          const imgElement = document.createElement('img');
+          
+          // Convert the code to lowercase and handle "WTS" code specifically
+          const code = warningInfo.code.toLowerCase() === "wts" ? "ts" : warningInfo.code.toLowerCase();
+
+          imgElement.src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${code}.gif`; // Update src property with correct URL
+          imgElement.classList.add("weather-icon");
+          warningElement.appendChild(imgElement);
+
+          warningsTable.appendChild(warningElement);
+        });
+      }
+
+    }
+
+    new WeatherViewModel();
+
+    async function getObData() {
+      return fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en", {mode: 'cors'})
+        .then(response => response.json());
+    }
 
 
-async function main() {
-  let pos = null; // Positioning feature removed
-  let addr = null; // Address retrieval related with geolocation removed
-	
-  try {
-    var Odata = await getObData(); //wait for weather data
-  } catch(err) { //do this when encountering error
-    console.log(err);
-    document.getElementById('header').innerHTML = "Unable to retrieve weather data";
-    return; //finish and stop the program
-  }
-  
-  //Get the HTML div block for writing the data
-  let output = document.getElementById('header');
-  
-  //display the weather icon
-  let iconidx = Odata.icon[0];
-  let icon = document.createElement('img');
-  icon.src = 'https://rss.weather.gov.hk/img/pic'+iconidx+'.png';
-  icon.id = 'icon';
-  icon.setAttribute('class', 'winfo');
-  output.append(icon);
-  
-  //display the temperature info
-  let tempBlk = document.createElement('span');
-  tempBlk.setAttribute('class', 'winfo');
-  let tempData = Odata.temperature.data[1].value;
-  tempBlk.innerHTML = "<span id='temp'>" + tempData + "°C" + "</span>";
-  output.append(tempBlk);
-  
-  // Rainfall info related with geolocation removed
-      
-  //add event handler to each cross button
-  btns = document.querySelectorAll('.btn'); //get all cancel icons
-  for (let btn of btns) {  //iterate thru all cancel icons
-    //add an handler to turn off the display of that block
-    btn.addEventListener('click', (event) => {
-      let parent = event.target.parentNode;
-      parent.style.display = 'none';
+    async function main() {
+      let pos = null;
+      let addr = null;
+
+      try {
+        var Odata = await getObData(); //wait for weather data
+      } catch(err) {
+        console.log(err);
+        document.getElementById('header').innerHTML = "Unable to retrieve weather data";
+        return;
+      }
+
+      let output = document.getElementById('header');
+
+      let iconidx = Odata.icon[0];
+      let icon = document.createElement('img');
+      icon.src = 'https://rss.weather.gov.hk/img/pic' + iconidx + '.png';
+      icon.classList.add("weather-icon");
+      output.append(icon);
+
+      let tempBlk = document.createElement('span');
+      tempBlk.classList.add("temp");
+      let tempData = Odata.temperature.data[1].value;
+      tempBlk.innerHTML = "<span>" + tempData + "°C" + "</span>";
+      output.append(tempBlk);
+
+      btns = document.querySelectorAll('.btn');
+      for (let btn of btns) {
+        btn.addEventListener('click', (event) => {
+          let parent = event.target.parentNode;
+          parent.style.display = 'none';
+        });
+      }
+    }
+
+    main();
+
+    let header = document.getElementById('header');
+    let reload = document.createElement('img');
+
+    header.prepend(reload);
+    reload.addEventListener('click', () => {
+      document.location.reload();
     });
-  }
-}
-
-main();
-
-let header = document.getElementById('header');
-let reload = document.createElement('img');
-
-header.prepend(reload);
-//add event handler to execute reload
-reload.addEventListener('click', () => {
-document.location.reload();
-});
-
-</script>
+  </script>
 </body>
 </html>
