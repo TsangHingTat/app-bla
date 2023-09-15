@@ -17,6 +17,10 @@ body, div, p, span {
   justify-content: left; /* Horizontally center the content */
 }
 
+#warnings-table-container img {
+  padding-left: 10px;
+}
+
 .weather-paragraph {
   color: blue;
   padding: 10px;
@@ -91,7 +95,8 @@ body, div, p, span {
           const imgElement = document.createElement('img');
           
           // Convert the code to lowercase and handle "WTS" code specifically
-          const code = warningInfo.code.toLowerCase() === "wts" ? "ts" : warningInfo.code.toLowerCase();
+          let code = warningInfo.code.toLowerCase();
+          code = code.slice(1);
 
           imgElement.src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${code}.gif`; // Update src property with correct URL
           imgElement.classList.add("weather-icon-img");

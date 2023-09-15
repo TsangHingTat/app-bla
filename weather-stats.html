@@ -20,6 +20,10 @@ p {
   flex-direction: row;
 }
 
+#warnings-table img {
+  padding-left: 5px;
+}
+
 .weather-icon {
   height: 25px;
 }
@@ -87,7 +91,8 @@ p {
           const imgElement = document.createElement('img');
           
           // Convert the code to lowercase and handle "WTS" code specifically
-          const code = warningInfo.code.toLowerCase() === "wts" ? "ts" : warningInfo.code.toLowerCase();
+          let code = warningInfo.code.toLowerCase();
+          code = code.slice(1);
 
           imgElement.src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${code}.gif`; // Update src property with correct URL
           imgElement.classList.add("weather-icon");
