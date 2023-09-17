@@ -76,3 +76,13 @@ video {
     padding-left: 10%; 
     padding-right: 3%; 
 }
+
+li {
+    font-size: 120%;
+}
+
+.awe {
+    height: 100vh;
+    padding: 5%;
+    align-items: center; 
+}
