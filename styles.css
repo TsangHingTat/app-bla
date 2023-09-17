@@ -83,6 +83,8 @@ video {
 
 .awe {
     height: 100vh;
-    padding: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-bottom: 5%;
     align-items: center; 
 }
